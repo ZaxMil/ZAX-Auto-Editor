@@ -1,0 +1,2 @@
+# Optional offline AI captions (base editor has no pip dependencies)
+faster-whisper>=1.0,<2

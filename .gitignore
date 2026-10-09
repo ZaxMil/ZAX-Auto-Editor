@@ -1,0 +1,13 @@
+.local/
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.DS_Store
+*.mp4
+*.mov
+*.mkv
+*.wav
+*.mp3
+*.srt
+!tests/fixtures/*.srt
