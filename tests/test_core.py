@@ -30,9 +30,9 @@ class TimelineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             files=captions.write_subtitles([{"start":0.5,"end":2.1,"text":"أهلا وسهلا"}],Path(d))
             self.assertEqual(len(files),3)
-            self.assertIn("أهلا وسهلا",files[0].read_text())
-            self.assertIn("WEBVTT",files[1].read_text())
-            self.assertEqual(json.loads(files[2].read_text())[0]["start"],.5)
+            self.assertIn("أهلا وسهلا",files[0].read_text(encoding="utf-8"))
+            self.assertIn("WEBVTT",files[1].read_text(encoding="utf-8"))
+            self.assertEqual(json.loads(files[2].read_text(encoding="utf-8"))[0]["start"],.5)
 
     @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"),"FFmpeg missing")
     def test_ffmpeg_pipeline(self):
