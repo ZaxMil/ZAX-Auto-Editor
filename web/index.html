@@ -26,6 +26,12 @@
   <div class="panel-head"><div><div class="eyebrow">01 / MEDIA</div><h2>مكتبة الملفات</h2></div><label class="upload">＋ أضف فيديو أو صوت أو SRT <input id="upload" type="file" accept="video/*,audio/*,.srt,.vtt,.ass" multiple hidden></label></div>
   <div id="empty" class="empty"><div class="empty-icon">▧</div><b>ابدأ بإضافة فيديو</b><p>MP4 / MOV / MKV / MP3 / WAV — حتى 2GB للملف</p></div>
   <div id="fileGrid" class="file-grid"></div>
+  <video id="preview" controls playsinline preload="metadata" hidden></video>
+ </section>
+ <section class="panel" id="assistant">
+  <div class="panel-head"><div><div class="eyebrow">AI / LOCAL ASSISTANT</div><h2>المونتير الذكي · Ollama</h2></div><span class="hint">اختياري · يعمل محليًا بدون API مدفوع</span></div>
+  <div class="ai-controls"><textarea id="aiPrompt" rows="2" placeholder="مثال: شيل السكوت من الفيديو، أو اعمل كابشن عربي..."></textarea><input id="aiModel" value="qwen2.5:3b" aria-label="Ollama model"><button id="aiPlan" class="primary">اقترح التعديل</button></div>
+  <div id="aiResult" class="muted">المساعد يقترح أداة وإعداداتها. أنت بتراجع وتشغّل المهمة بنفسك.</div>
  </section>
  <section class="panel" id="workshop">
   <div class="panel-head"><div><div class="eyebrow">02 / WORKSHOP</div><h2>أدوات المونتاج</h2></div><span class="hint">اختار أداة وملف، وبعدها شغّل المهمة</span></div>

@@ -177,6 +177,11 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path=="/api/upload":
                 self.upload();return
+            if path=="/api/plan":
+                from .planner import plan
+                data=self.json_body()
+                self.reply(200,plan(data.get("prompt",""),data.get("model","qwen2.5:3b")))
+                return
             if path=="/api/jobs":
                 data=self.json_body()
                 action=data.get("action")

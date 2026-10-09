@@ -37,6 +37,17 @@ function selectTool(tool){
  document.querySelectorAll(".tool").forEach(b=>b.classList.toggle("selected",b.dataset.tool===tool));
  if(tool==="burn")populateSubtitles();
 }
+function updatePreview(){
+ const item=files.find(f=>f.id===el("selectedMedia").value),video=el("preview");
+ if(!item||item.details.subtitle){video.hidden=true;video.removeAttribute("src");return;}
+ video.hidden=false;
+ if(video.dataset.id!==item.id){
+  video.dataset.id=item.id;
+  video.src="/api/source?id="+encodeURIComponent(item.id);
+  video.load();
+ }
+}
+
 function renderMedia(){
  const grid=el("fileGrid"),sel=el("selectedMedia"),previous=sel.value;
  grid.replaceChildren();sel.replaceChildren();el("empty").style.display=files.length?"none":"block";
@@ -45,9 +56,11 @@ function renderMedia(){
   const box=elem("div","file"),icon=elem("div","glyph",f.details.subtitle?"▤":"▶");
   const txt=elem("div","txt"),b=elem("b","",f.name),small=elem("small","",((f.details.bytes||0)/1048576).toFixed(1)+" MB");
   txt.append(b,small);box.append(icon,txt);grid.appendChild(box);
+  box.addEventListener("click",()=>{sel.value=f.id;updatePreview();});
  });
  if([...sel.options].some(o=>o.value===previous))sel.value=previous;
  el("mediaCount").textContent=files.length;
+ updatePreview();
  if(action==="burn")populateSubtitles();
 }
 function renderJobs(){
@@ -99,10 +112,30 @@ async function startJob(){
  }catch(err){notice(err.message,true);}
  finally{button.disabled=false;button.textContent="▶  شغّل المهمة";}
 }
+async function proposeEdit(){
+ const prompt=el("aiPrompt").value.trim();
+ if(!prompt){notice("اكتب المطلوب من المونتير",true);return;}
+ const button=el("aiPlan");button.disabled=true;button.textContent="جاري التفكير...";
+ try{
+  const plan=await api("/api/plan",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({prompt,model:el("aiModel").value})});
+  selectTool(plan.action);
+  for(const [name,value] of Object.entries(plan.options)){
+   const input=el("options").querySelector('[name="'+name+'"]');
+   if(input)input.value=String(value);
+  }
+  el("aiResult").textContent=plan.explanation+" — جهزت أداة "+titles[plan.action]+". راجع الإعدادات واضغط شغّل المهمة.";
+  el("workshop").scrollIntoView({behavior:"smooth"});
+ }catch(err){notice("Ollama: "+err.message,true);}
+ finally{button.disabled=false;button.textContent="اقترح التعديل";}
+}
+
 async function boot(){
  document.querySelectorAll(".tool").forEach(b=>b.addEventListener("click",()=>selectTool(b.dataset.tool)));
  el("upload").addEventListener("change",uploadMedia);
+ el("selectedMedia").addEventListener("change",updatePreview);
  el("run").addEventListener("click",startJob);
+ el("aiPlan").addEventListener("click",proposeEdit);
  el("refresh").addEventListener("click",refresh);
  selectTool("silence");
  try{

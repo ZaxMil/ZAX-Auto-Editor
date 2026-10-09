@@ -9,7 +9,7 @@ Python standard library + FFmpeg. No Electron or cloud account required.
 
 | Tool | Result |
 |---|---|
-| Automatic silence cutting | Edited MP4 + JSON cut list |
+| Automatic silence cutting | Edited MP4 + JSON cut list + experimental FCP7 XML timeline |
 | Offline AI transcription (optional) | Arabic/English SRT, VTT and JSON |
 | Burn subtitles | MP4 with SRT/VTT/ASS captions |
 | Reframe for social | 9:16, 16:9, 1:1, 4:5, crop or pad |
@@ -35,6 +35,10 @@ For offline AI captions, open Terminal in the project directory and run:
     python -m pip install -r requirements-ai.txt
 
 The first transcription downloads the selected model once. CPU-only processing may be slow on older hardware.
+
+Optional AI assistant: install Ollama from https://ollama.com , run
+    ollama pull qwen2.5:3b
+and use the assistant panel to describe the edit in Arabic. The AI only selects a supported tool and proposes settings; you review them and start the task. Ollama weights require disk space and RAM.
 
 ## Linux installation
 

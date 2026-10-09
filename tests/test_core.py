@@ -20,6 +20,12 @@ class TimelineTests(unittest.TestCase):
         self.assertEqual(captions.stamp(3723.456),"01:02:03,456")
         self.assertEqual(captions.stamp(1.234,True),"00:00:01.234")
 
+    def test_ai_plan_validation(self):
+        from zax_editor.planner import validate
+        self.assertEqual(validate({"action":"resize","options":{"ratio":"9:16","shell":"rm -rf /"}})["options"],{"ratio":"9:16"})
+        with self.assertRaises(ValueError):
+            validate({"action":"delete_all","options":{}})
+
     def test_caption_export(self):
         with tempfile.TemporaryDirectory() as d:
             files=captions.write_subtitles([{"start":0.5,"end":2.1,"text":"أهلا وسهلا"}],Path(d))
@@ -43,5 +49,8 @@ class TimelineTests(unittest.TestCase):
                 results=getattr(media,name)(src,dest,{})
                 self.assertTrue(all(p.is_file() for p in results),name)
             self.assertTrue((folder/"silence"/"silence-cut.mp4").is_file())
+            import xml.etree.ElementTree as ET
+            xml=ET.parse(folder/"silence"/"premiere-timeline.xml")
+            self.assertEqual(xml.getroot().tag,"xmeml")
 
 if __name__=="__main__": unittest.main()

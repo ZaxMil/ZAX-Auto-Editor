@@ -17,12 +17,12 @@ def run(args, cwd=None):
 
 def info(src):
     raw = run(["ffprobe","-v","error","-show_entries",
-               "format=duration,size:stream=codec_type,width,height","-of","json",src])
+               "format=duration,size:stream=codec_type,width,height,r_frame_rate","-of","json",src])
     data = json.loads(raw)
     v = next((s for s in data.get("streams",[]) if s.get("codec_type")=="video"),{})
     f = data.get("format",{})
     return {"duration":float(f.get("duration",0)), "bytes":int(f.get("size",0)),
-            "width":v.get("width"), "height":v.get("height"),
+            "width":v.get("width"), "height":v.get("height"), "fps":v.get("r_frame_rate","30/1"),
             "audio":any(s.get("codec_type")=="audio" for s in data.get("streams",[]))}
 
 def kept_ranges(log, length, padding=.12):
@@ -67,7 +67,9 @@ def silence(src, out, options):
     manifest=out/"cut-list.json"
     manifest.write_text(json.dumps({"kept_ranges_seconds":spans,
                                      "original_duration":meta["duration"]},indent=2))
-    return [target,manifest]
+    from .premiere import build
+    xml=build(src,spans,out/"premiere-timeline.xml",meta)
+    return [target,manifest,xml]
 
 def resize(src,out,options):
     ratio=options.get("ratio","9:16")
